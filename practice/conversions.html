@@ -1,12 +1,21 @@
 <html>
 	<head>
 		<title>Number Conversions | Practice</title>
-		<link href="../rsrc/style.css" rel="stylesheet" />
+
+		<!-- EXTERNAL SCRIPTS -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+		<!-- LOCAL STYLES -->
+		<link href="../rsrc/style/style.css" rel="stylesheet" />
+
+		<!-- LOCAL SCRIPTS -->
+		<script src="../rsrc/script/binary.js"></script>
+		<script src="../rsrc/script/radix.js"></script>
+		<script src="../rsrc/script/rand.js"></script>
+
 		<script type="text/javascript">
 			var problem = {};
 			var types = ['arbitrary', 'powers', 'unsigned', 'signed', 'ones', 'twos', 'single', 'double'];
-			var baseChars = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'];
 
 			function newProblem(problemType) {
 				if (problemType == 'all') {
@@ -18,6 +27,9 @@
 				} else if (problemType == 'powers') {
 					return newPowers();
 				} else {
+					if (problemType == 'floating') {
+						problemType = (Math.random() > 0.5 ? 'single' : 'double');
+					}
 					var min = (problemType == 'unsigned') ? 0 : -32768;
 					var randFunc = (problemType == 'single' || problemType == 'double') ? randFloat : randInt;
 
@@ -28,7 +40,7 @@
 			function newArbitrary() {
 				var toBase = randInt(2, 16);
 				var fromBase;
-				var val = randInt(-32768, 32768);
+				var val = randInt(0, 32768);
 
 				do {
 					fromBase = randInt(2, 16);
@@ -67,17 +79,6 @@
 				return {type: problemType, direction: dir, value: val};
 			}
 
-			function randInt(min, max) {
-				// min and max must be ints
-				// returns in the range [min, max]
-
-				return Math.floor(Math.random() * (max - min + 1)) + min;
-			}
-
-			function randFloat(min, max) {
-				return (Math.random() * (max - min + 1));
-			}
-
 			function solveProblem(problemType) {
 				alert('Solve it yourself');
 			}
@@ -99,42 +100,28 @@
 				}
 			}
 
-			function toBase(val, base) {
-				var str = '';
-
-				while (val > 0) {
-					var remainder = val % base;
-					val = val - remainder;
-					val = val / base;
-
-					str = str + baseChars[remainder];
-				}
-
-				return str;
-			}
-
-			function pad(str, width) {
-				return str;
-			}
-
 			function toFormat(val, format, width) {
 				if (format == 'unsigned') {
 					return toBase(val, 2);
 				} else if (format == 'signed') {
 					var signBit = (val < 0) ? '1' : '0';
-					return signBit + pad(toBase(Math.abs(val), 2), width-1);
+					return signBit + zeroExtend(toBase(Math.abs(val), 2), width-1);
 				} else if (format == 'ones') {
 					if (val < 0) {
-						return invert(pad(toBase(Math.abs(val), 2), width));
+						return invert(zeroExtend(toBase(Math.abs(val), 2), width));
 					} else {
-						return pad(toBase(val, 2), width);
+						return zeroExtend(toBase(val, 2), width);
 					}
 				} else if (format == 'twos') {
 					if (val < 0) {
-						return negate(pad(toBase(Math.abs(val), 2), width));
+						return negate(zeroExtend(toBase(Math.abs(val), 2), width));
 					} else {
-						return pad(toBase(val, 2), width);
+						return zeroExtend(toBase(val, 2), width);
 					}
+				} else if (format == 'single') {
+					return '[not implemented]';
+				} else {
+					return '[not implemented]';
 				}
 			}
 
@@ -154,7 +141,7 @@
 					if (theProblem.direction == 'to') {
 						titleText = `Convert the number ${theProblem.value} to ${prettyName(theProblem.type)}`;
 					} else {
-						titleText = `Convert the number ${toFormat(theProblem.value)} from ${prettyName(theProblem.type)}`;
+						titleText = `Convert the number ${toFormat(theProblem.value, theProblem.type, 16)} from ${prettyName(theProblem.type)}`;
 					}
 				} 
 
