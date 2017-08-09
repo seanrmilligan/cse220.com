@@ -9,7 +9,7 @@
 function extend(str, width, char) {
 	var extStr = str;
 
-	while (extStr < width) {
+	while (extStr.length < width) {
 		extStr = char + extStr;
 	}
 
@@ -43,14 +43,15 @@ function signExtend(str, width) {
  */
 function invert(str) {
 	var inv = '';
+	var c;
 
 	for (var i=0; i<str.length; i++) {
-		inv = inv + (str[i] == '0') ? '1' : '0';
+		c = (str[i] == '0') ? '1' : '0';
+		inv = inv + c;
 	}
 
 	return inv;
 }
-
 
 /* OTHER OPERATIONS ON STRING REPRESENTATIONS OF BINARY NUMBERS */
 
@@ -59,18 +60,18 @@ function invert(str) {
  * @returns {string} The string representation of the negated two's complement binary number.
  */
 function negate(str) {
-	var inv = invert(str);
+	var neg = invert(str);
 	var carry = true;
 
 	/* omfg I'm doing string math, there must be a better way */
-	for (var i=inv.length-1; (carry && x >= 0); x--) {
-		if (inv[i] == '1') {
-			inv[i] = '0'
+	for (var i=neg.length-1; (carry && i >= 0); i--) {
+		if (neg[i] == '1') {
+			neg[i] = '0'
 		} else {
-			inv[i] = '1';
+			neg[i] = '1';
 			carry = false;
 		}
 	}
 
-	return inv;
+	return neg;
 }

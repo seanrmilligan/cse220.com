@@ -10,7 +10,7 @@
 
 		<!-- LOCAL SCRIPTS -->
 		<script src="../rsrc/script/binary.js"></script>
-		<script src="../rsrc/script/radix.js"></script>
+		<script src="../rsrc/script/numreps.js"></script>
 		<script src="../rsrc/script/rand.js"></script>
 
 		<script type="text/javascript">
@@ -100,62 +100,50 @@
 				}
 			}
 
-			function toFormat(val, format, width) {
-				if (format == 'unsigned') {
-					return toBase(val, 2);
-				} else if (format == 'signed') {
-					var signBit = (val < 0) ? '1' : '0';
-					return signBit + zeroExtend(toBase(Math.abs(val), 2), width-1);
-				} else if (format == 'ones') {
-					if (val < 0) {
-						return invert(zeroExtend(toBase(Math.abs(val), 2), width));
-					} else {
-						return zeroExtend(toBase(val, 2), width);
-					}
-				} else if (format == 'twos') {
-					if (val < 0) {
-						return negate(zeroExtend(toBase(Math.abs(val), 2), width));
-					} else {
-						return zeroExtend(toBase(val, 2), width);
-					}
-				} else if (format == 'single') {
-					return '[not implemented]';
-				} else {
-					return '[not implemented]';
+			function toFormat(value, format, width) {
+				switch (format) {
+					case 'unsigned':
+						return toUnsignedMagnitude(value);
+					case 'signed':
+						return toSignedMagnitude(value, width);
+					case 'ones':
+						return toOnesComplement(value, width);
+					case 'twos':
+						return toTwosComplement(value, width);
+					case 'single':
+						return toSinglePrecision(value);
+					case 'double':
+						return toDoublePrecision(value);
+					default:
+						return '${format} not supported';
 				}
 			}
 
 			function renderProblem(theProblem) {
-				var titleText = '';
-				var titleTag = document.createElement('h2');
-				var noteText = '';
-				
+				var titleTag = $('<h2></h2>');
+				var noteTag = null;
 
+				$('#problem').html('');
+				
 				if (theProblem.type == 'arbitrary' || theProblem.type == 'powers') {
-					titleText = `Convert the number ${toBase(theProblem.value, theProblem.from)} from base ${theProblem.from} to base ${theProblem.to}`;
+					titleTag.text(`Convert the number ${toBase(theProblem.value, theProblem.from)} from base ${theProblem.from} to base ${theProblem.to}`);
 
 					if (theProblem.type == 'powers') {
-						noteText = 'Use the fact that they are powers of one another.';
+						noteTag = $('<p></p>');
+						noteTag.addClass('note info');
+						note.text('Use the fact that they are powers of one another.');
 					}
 				} else {
 					if (theProblem.direction == 'to') {
-						titleText = `Convert the number ${theProblem.value} to ${prettyName(theProblem.type)}`;
+						titleTag.text(`Convert the number ${theProblem.value} to ${prettyName(theProblem.type)}`);
 					} else {
-						titleText = `Convert the number ${toFormat(theProblem.value, theProblem.type, 16)} from ${prettyName(theProblem.type)}`;
+						titleTag.text(`Convert the number ${toFormat(theProblem.value, theProblem.type, 16)} from ${prettyName(theProblem.type)}`);
 					}
 				} 
 
-				titleTextNode = document.createTextNode(titleText);
-				titleTag.append(titleTextNode);
-
-
-				$('#problem').html('');
 				$('#problem').append(titleTag);
 
-				if (noteText != '') {
-					var noteTag = document.createElement('p');
-					noteTag.className = 'note info';
-					noteTag.appendChild(document.createTextNode(noteText));
+				if (noteTag) {
 					$('#problem').append(noteTag);
 				}
 			}
