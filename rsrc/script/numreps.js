@@ -28,7 +28,13 @@ function toBase(value, base) {
  * @returns {number} The value of the string representation interpreted as a number in base.
  */
 function fromBase(str, base) {
+	var sum = 0;
 
+	for (i=0; i<str.length; i++) {
+		sum = sum + (baseChars.indexOf(str[i]) * Math.pow(base, (str.length - i - 1)));
+	}
+
+	return sum;
 }
 
 /* OPERATIONS CONVERTING TO AND FROM STRING REPRESENTATIONS OF UNSIGNED MAGNITUDE */
