@@ -1,0 +1,212 @@
+<html>
+	<head>
+		<title>Number Conversions | Practice</title>
+		<link href="../rsrc/style.css" rel="stylesheet" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script type="text/javascript">
+			var problem = {};
+			var types = ['arbitrary', 'powers', 'unsigned', 'signed', 'ones', 'twos', 'single', 'double'];
+			var baseChars = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'];
+
+			function newProblem(problemType) {
+				if (problemType == 'all') {
+					problemType = types[randInt(0, types.length-1)];
+				}
+
+				if (problemType == 'arbitrary') {
+					return newArbitrary();
+				} else if (problemType == 'powers') {
+					return newPowers();
+				} else {
+					var min = (problemType == 'unsigned') ? 0 : -32768;
+					var randFunc = (problemType == 'single' || problemType == 'double') ? randFloat : randInt;
+
+					return newBinary(problemType, min, randFunc);
+				}
+			}
+
+			function newArbitrary() {
+				var toBase = randInt(2, 16);
+				var fromBase;
+				var val = randInt(-32768, 32768);
+
+				do {
+					fromBase = randInt(2, 16);
+				} while(toBase == fromBase);
+
+				return {type: 'arbitrary', to: toBase, from: fromBase, value: val};
+			}
+
+			function newPowers() {
+				var toBase;
+				var fromBase;
+				var val = randInt(0, 32768);
+
+				// pick a small base, let's not make the problems too hard
+				var temp1 = 2;
+
+				// make the other base a somewhat small power of that small base
+				var temp2 = Math.pow(temp1, randInt(2, 4));
+
+				// randomly choose whether the toBase or the fromBase is the larger power
+				if (Math.random() > 0.5) {
+					toBase = temp1;
+					fromBase = temp2;
+				} else {
+					toBase = temp2;
+					fromBase = temp1;
+				}
+
+				return {type: 'powers', to: toBase, from: fromBase, value: val};
+			}
+
+			function newBinary(problemType, min, randFunc) {
+				var dir = Math.random() > 0.5 ? 'to' : 'from';
+				var val = randFunc(min, 32768);
+
+				return {type: problemType, direction: dir, value: val};
+			}
+
+			function randInt(min, max) {
+				// min and max must be ints
+				// returns in the range [min, max]
+
+				return Math.floor(Math.random() * (max - min + 1)) + min;
+			}
+
+			function randFloat(min, max) {
+				return (Math.random() * (max - min + 1));
+			}
+
+			function solveProblem(problemType) {
+				alert('Solve it yourself');
+			}
+
+			function prettyName(problemType) {
+				switch(problemType) {
+					case 'unsigned':
+						return 'Unsigned Magnitude';
+					case 'signed':
+						return 'Signed Magnitude';
+					case 'ones':
+						return "One's Complement";
+					case 'twos':
+						return "Two's Complement";
+					case 'single':
+						return 'IEEE 754 Single Precision Format';
+					case 'double':
+						return 'IEEE 754 Double Precision Format';
+				}
+			}
+
+			function toBase(val, base) {
+				var str = '';
+
+				while (val > 0) {
+					var remainder = val % base;
+					val = val - remainder;
+					val = val / base;
+
+					str = str + baseChars[remainder];
+				}
+
+				return str;
+			}
+
+			function pad(str, width) {
+				return str;
+			}
+
+			function toFormat(val, format, width) {
+				if (format == 'unsigned') {
+					return toBase(val, 2);
+				} else if (format == 'signed') {
+					var signBit = (val < 0) ? '1' : '0';
+					return signBit + pad(toBase(Math.abs(val), 2), width-1);
+				} else if (format == 'ones') {
+					if (val < 0) {
+						return invert(pad(toBase(Math.abs(val), 2), width));
+					} else {
+						return pad(toBase(val, 2), width);
+					}
+				} else if (format == 'twos') {
+					if (val < 0) {
+						return negate(pad(toBase(Math.abs(val), 2), width));
+					} else {
+						return pad(toBase(val, 2), width);
+					}
+				}
+			}
+
+			function renderProblem(theProblem) {
+				var titleText = '';
+				var titleTag = document.createElement('h2');
+				var noteText = '';
+				
+
+				if (theProblem.type == 'arbitrary' || theProblem.type == 'powers') {
+					titleText = `Convert the number ${toBase(theProblem.value, theProblem.from)} from base ${theProblem.from} to base ${theProblem.to}`;
+
+					if (theProblem.type == 'powers') {
+						noteText = 'Use the fact that they are powers of one another.';
+					}
+				} else {
+					if (theProblem.direction == 'to') {
+						titleText = `Convert the number ${theProblem.value} to ${prettyName(theProblem.type)}`;
+					} else {
+						titleText = `Convert the number ${toFormat(theProblem.value)} from ${prettyName(theProblem.type)}`;
+					}
+				} 
+
+				titleTextNode = document.createTextNode(titleText);
+				titleTag.append(titleTextNode);
+
+
+				$('#problem').html('');
+				$('#problem').append(titleTag);
+
+				if (noteText != '') {
+					var noteTag = document.createElement('p');
+					noteTag.className = 'note info';
+					noteTag.appendChild(document.createTextNode(noteText));
+					$('#problem').append(noteTag);
+				}
+			}
+
+			$(document).ready(function() {
+				problem = newProblem($('#opts').find(":selected").val());
+				renderProblem(problem);
+
+				$('#new').on('click', function() {
+					problem = newProblem($('#opts').find(':selected').val());
+					renderProblem(problem);
+				});
+				$('#sol').on('click', function() {
+					solveProblem(problem);
+				});
+			});
+		</script>
+	</head>
+	<body>
+	<article>
+		<h1>Number Conversions</h1>
+		<div>
+			<div class="menu">
+				<select id="opts">
+					<option value="all" selected="selected">All Problems</option>
+					<option value="arbitrary">Arbitrary Bases</option>
+					<option value="powers">Powers of Bases</option>
+					<option value="unsigned">Unsigned Magnitude</option>
+					<option value="signed">Signed Magnitude</option>
+					<option value="ones">One's Complement</option>
+					<option value="twos">Two's Complement</option>
+					<option value="floating">Floating Point</option>
+				</select>
+				<button id="new">New Problem</button>
+				<button id="sol">Show Solution</button>
+			</div>
+			<div id="problem"></div>
+		</div>
+	</article>
+	</body>
+</html>

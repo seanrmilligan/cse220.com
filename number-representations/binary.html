@@ -1,0 +1,277 @@
+<html>
+	<head>
+		<title>Binary Numbers | Number Representations</title>
+		<link href="../rsrc/style.css" rel="stylesheet" />
+	</head>
+	<body>
+	<article>
+		<h1>Binary Numbers</h1>
+		<div>
+			<h2>Introduction</h2>
+			<h3>Terminology &amp; Nomenclature</h3>
+			<ul>
+				<li id="bias"><span class="definition">bias</span> &mdash; The value of the 'k' in <a href="#excess-k">excess-k</a>.</li>
+				<li id="biased-exponent"><span class="definition">biased exponent</span> &mdash; The exponent bit representation after the <a href="#excess-k">bias</a> has been applied.</li>
+				<li id="excess-k"><span class="definition">excess-k<span class="definition"> (also <span class="definition">excess-N</span>) &mdash; A scheme in which the minimum and maximum value of a system are shifted by adding a <a href="#bias">bias</a>, such that the new minimum value is all zeroes and the new maximum values is all ones.</li>
+				<li id="mantissa"><span class="definition">mantissa</span> (also <span class="definition">significand</span>) &mdash; The 'fraction' portion of a number written in scientific notation.</li>
+			</ul>
+			<p class="note info">Note: excess-k has a different range than two's complement. For example, the range of 8-bit excess-k is [-127, 128] while the range of two's complement is [-128, 127].</p>
+			<h2 id="unsigned-magnitude">Unsigned Magnitude</h2>
+			<p class="label good">One representation of zero</p>
+			<div class="table-container">
+				<table>
+					<thead>
+						<tr>
+							<th>N-bit system</th>
+							<th>Range of Values</th>
+							<th>Size of Range</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>N</td>
+							<td class="nowrap">[0, 2<sup>N</sup>-1]</td>
+							<td>2<sup>N</sup></td>
+						</tr>
+						<tr>
+							<td>8</td>
+							<td class="nowrap">[0, 255]</td>
+							<td>256</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<h3>Summary</h3>
+			<p>Unigned magnitude is your plain old counting binary.</p>
+			<h3>Writing an Unsigned Magnitude Number</h3>
+			<ol>
+				<li>Divide the number by two to obtain an integer quotient and a remainder.</li>
+				<li>Put the remainder in the next unoccupied position from smallest to largest.</li>
+				<li>If the quotient is zero, stop. Else, repeat where the number is now the quotient.</li>
+			</ol>
+			<h3>Issues</h3>
+			<p>There are no negative numbers!</p>
+			
+			<h2 id="signed-magnitude">Signed Magnitude</h2>
+			<p class="label bad">Two representations of zero</p>
+			<div class="table-container">
+				<table>
+					<thead>
+						<tr>
+							<th>N-bit system</th>
+							<th>Range of Values</th>
+							<th>Size of Range</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>N</td>
+							<td class="nowrap">[-2<sup>N-1</sup>+1, 2<sup>N-1</sup>-1]</td>
+							<td>2<sup>N</sup>-1</td>
+						</tr>
+						<tr>
+							<td>8</td>
+							<td class="nowrap">[-127, 127]</td>
+							<td>255</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<h3>Summary</h3>
+			<p>Signed magnitude builds on unsigned magnitude by placing a 0 or a 1 at the start of a number to represent positive or negative, respectively. The rest of the digits then signify the value or 'magnitude' of the number. Because computer architectures can only handle so many bits in a processor (the precision), the number is written as fixed-width. Thus the leading zeroes are necessary to pad the number.</p>
+			<h3>Writing a Signed Magnitude Number</h3>
+			<ol>
+				<li>Check the number is in range for the number of bits you have to work with.</li>
+				<li>Set aside the sign for a moment, and treat the number as positive.</li>
+				<li>Get the value as you would in unsigned magnitude.</li>
+				<li>Pad with leading zeroes as necessary.</li>
+				<li>If positive, set the leading bit to zero. If negative, set the leading bit to one.</li>
+			</ol>
+			<h3>Issues</h3>
+			<p>Arithmetic is difficult and there are two representations of zero.</p>
+			
+			<h2 id="ones-complement">One's Complement</h2>
+			<p class="label bad">Two representations of zero</p>
+			<div class="table-container">
+				<table>
+					<thead>
+						<tr>
+							<th>N-bit system</th>
+							<th>Range of Values</th>
+							<th>Size of Range</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>N</td>
+							<td class="nowrap">[-2<sup>N-1</sup>+1, 2<sup>N-1</sup>-1]</td>
+							<td>2<sup>N</sup>-1</td>
+						</tr>
+						<tr>
+							<td>8</td>
+							<td class="nowrap">[-127, 127]</td>
+							<td>255</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<h3>Summary</h3>
+			<p>---</p>
+			<h3>Writing a One's Complement Number</h3>
+			<ol>
+				<li>Check the number is in range for the number of bits you have to work with.</li>
+				<li>Set aside the sign for a moment, and treat the number as positive.</li>
+				<li>Get the value as you would in unsigned magnitude.</li>
+				<li>Pad with leading zeroes as necessary.</li>
+				<li>If positive, stop. If negative, flip all the bits.</li>
+			</ol>
+			<h3>Issues</h3>
+			<p>Arithmetic almost works, but we have to check for both values of zero.</p>
+
+			<h2 id="twos-complement">Two's Complement</h2>
+			<p class="label good">One representation of zero</p>
+			<div class="table-container">
+				<table>
+					<thead>
+						<tr>
+							<th>N-bit system</th>
+							<th>Range of Values</th>
+							<th>Size of Range</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>N</td>
+							<td class="nowrap">[-2<sup>N-1</sup>, 2<sup>N-1</sup>-1]</td>
+							<td>2<sup>N</sup></td>
+						</tr>
+						<tr>
+							<td>8</td>
+							<td class="nowrap">[-128, 127]</td>
+							<td>256</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<h3>Summary</h3>
+			<p>Two's complement is the most widespread number format. Addition 'simply' works. Subtraction is represented as addition: A-B &rarr; A+neg(B)</p>
+			<h3>Writing a Two's Complement Number</h3>
+			<ol>
+				<li>Check the number is in range for the number of bits you have to work with.</li>
+				<li>Set aside the sign for a moment, and treat the number as positive.</li>
+				<li>Get the value as you would in unsigned magnitude.</li>
+				<li>Pad with leading zeroes as necessary.</li>
+				<li>If positive, stop. If number, flip all the bits and add one.</li>
+			</ol>
+			
+			<h2 id="floating-point">IEEE 754 Floating Point</h2>
+			<p class="label bad">Two representations of zero</p>
+			<div class="table-container">
+				<table>
+					<thead>
+						<tr>
+							<th></th>
+							<th>n-bits</th>
+							<th>excess-k</th>
+							<th>n-bits sign</th>
+							<th>n-bits exponent</th>
+							<th>n-bits mantissa</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Single Precision</td>
+							<td>32-bit</td>
+							<td>excess-127</td>
+							<td>1 bit</td>
+							<td>8 bit</td>
+							<td>23 bit</td>
+						</tr>
+						<tr>
+							<td>Double Precision</td>
+							<td>64-bit</td>
+							<td>excess-1023</td>
+							<td>1 bit</td>
+							<td>11 bit</td>
+							<td>52 bit</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<h3>Special Values</h3>
+			<h4 id="zero">Zero</h4>
+			<div class="table-container">
+				<table>
+					<thead>
+						<tr>
+							<th>sign</th>
+							<th>exponent</th>
+							<th>mantissa</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>0</td>
+							<td>00000000</td>
+							<td>00000000000000000000000</td>
+						</tr>
+						<tr>
+							<td>1</td>
+							<td>00000000</td>
+							<td>00000000000000000000000</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<h4 id="infinity">Infinity</h4>
+			<div class="table-container">
+				<table>
+					<thead>
+						<tr>
+							<th>sign</th>
+							<th>exponent</th>
+							<th>mantissa</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>0</td>
+							<td>11111111</td>
+							<td>00000000000000000000000</td>
+						</tr>
+						<tr>
+							<td>1</td>
+							<td>11111111</td>
+							<td>00000000000000000000000</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<h4 id="#NaN">NaN (Not a Number)</h4>
+			<div class="table-container">
+				<table>
+					<thead>
+						<tr>
+							<th>sign</th>
+							<th>exponent</th>
+							<th>mantissa</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>X</td>
+							<td>11111111</td>
+							<td>XXXXXXXXXXXXXXXXXXXXXXX</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td class="info" colspan="3">Note: X stands for any combination of bits except all-zero as this would conflict with <a href="#infinity">infinity</a>.</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+		</article>
+	</body>
+</html>

@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400');
+
+* {
+	margin: 0;
+	padding: 0;
+}
+body {
+	background-color: #F3F3F3;
+	color: #333333;
+	font-family: sans-serif;
+	font-weight: normal;
+	font-size: 14px;
+}
+article {
+	max-width: 1200px;
+	margin-left: auto;
+	margin-right: auto;
+}
+article > div {
+	padding: 20px;
+	border: 1px solid #CACACA;
+	background-color: #FFFFFF
+}
+article > div > h2:first-child {
+	margin-top: 0;
+}
+article > div > *:last-child {
+	margin-bottom: 0;
+}
+article > div, h1 {
+	margin: 20px;
+
+}
+
+
+
+h1, h2 {
+	border-color: #CACACA;
+	border-width: 1px;
+	font-family: "Montserrat", sans-serif;
+	font-size: 20px;
+	margin-bottom: 10px;
+	text-transform: uppercase;
+}
+h1, h2, h4 {
+	font-weight: normal;
+}
+h1 {
+	border-bottom-style: solid;
+}
+h2 {
+	margin-top: 20px;
+	border-bottom-style: dotted;
+}
+h3, h4 {
+	font-size: 14px;
+}
+h3, h4, table, p {
+	margin: 0 10px 10px 10px;
+}
+
+.menu select, .menu button {
+	font-size: 14px;
+	padding: 5px 10px;
+}
+@media (max-width: 500px) {
+	.menu select, .menu button {
+		width: 100%;
+		font-size: 18px;
+		text-align: left;
+		margin-bottom: 10px;
+	}
+	.menu > *:last-child {
+		margin-bottom: 0;
+	}
+}
+
+ul, ol {
+	margin-left: 40px;
+	margin-bottom: 10px;
+}
+.table-container {
+	overflow-x: auto;
+	margin-bottom: 10px;
+}
+.nowrap {
+	white-space: nowrap;
+}
+
+
+
+table {
+	border-collapse: collapse;
+	overflow: auto;
+}
+table, thead, tbody, tfoot, tr, th, td {
+	font-family: monospace;
+	text-align: left;
+	font-weight: normal;
+}
+thead > tr {
+	background-color: #99CCFF;
+}
+tr:nth-child(2n) {
+	background-color: #F3F3F3;
+}
+th, td {
+	padding: 5px 20px 5px 10px;
+}
+th {
+}
+
+
+.cmd {
+	background-color: #F3F3F3;
+	border: 1px solid #CACACA;
+	border-radius: 8px;
+	padding: 1px 3px;
+}
+.mono {
+	font-family: monospace;
+}
+pre {
+	padding: 20px;
+	margin: 20px;
+	overflow: auto;
+}
+pre.cli {
+	background-color: #4F2F4F;
+	border: 1px solid #CACACA;
+	color: #FFFFFF;
+}
+.cli .prmpt {
+	color: #00FF00;
+}
+.cli .dir {
+	color: #0088FF;
+}
+
+
+
+.note, .label {
+	padding: 5px 10px;
+}
+.label {
+	display: inline-block;
+}
+.good {
+	background-color: #D4EDB4;
+}
+.bad {
+	background-color: #EDB4B4;
+}
+.info {
+	background-color: #FFF3B3;
+}
