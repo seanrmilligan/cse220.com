@@ -11,13 +11,13 @@ function toBase(value, base) {
 	var str = '';
 	var remainder;
 
-	while (value > 0) {
+	do {
 		remainder = value % base;
 		value = value - remainder;
 		value = value / base;
 
 		str = baseChars[remainder] + str;
-	}
+	} while (value > 0);
 
 	return str;
 }
@@ -35,6 +35,10 @@ function fromBase(str, base) {
 	}
 
 	return sum;
+}
+
+function val(c) {
+	return baseChars.indexOf(c);
 }
 
 /* OPERATIONS CONVERTING TO AND FROM STRING REPRESENTATIONS OF UNSIGNED MAGNITUDE */
