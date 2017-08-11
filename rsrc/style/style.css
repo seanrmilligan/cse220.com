@@ -12,7 +12,7 @@ body {
 	font-size: 14px;
 }
 article {
-	max-width: 1200px;
+	max-width: 1400px;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -79,16 +79,13 @@ ul, ol {
 	margin-left: 40px;
 	margin-bottom: 10px;
 }
+
+
+
 .table-container {
 	overflow-x: auto;
 	margin-bottom: 10px;
 }
-.nowrap {
-	white-space: nowrap;
-}
-
-
-
 table {
 	border-collapse: collapse;
 	overflow: auto;
@@ -97,6 +94,21 @@ table, thead, tbody, tfoot, tr, th, td {
 	font-family: monospace;
 	text-align: left;
 	font-weight: normal;
+}
+table.compact th, table.compact td {
+	padding: 3px 8px 3px 8px;
+}
+table.horizontal tr:nth-child(2n) {
+	background-color: inherit;
+}
+table.horizontal td:nth-child(2n) {
+	background-color: #F3F3F3;
+}
+table.horizontal td {
+	text-align: center;
+}
+table.horizontal th {
+	background-color: #99CCFF;
 }
 thead > tr {
 	background-color: #99CCFF;
@@ -107,7 +119,8 @@ tr:nth-child(2n) {
 th, td {
 	padding: 5px 20px 5px 10px;
 }
-th {
+th.nowrap, td.nowrap {
+	white-space: nowrap;
 }
 
 
@@ -138,7 +151,14 @@ pre.cli {
 }
 
 
+.instr {
+	counter-reset: steps;
+}
 
+.instr h3:before {
+	content: counter(steps) ".\0000a0\0000a0";
+    counter-increment: steps;
+}
 .note, .label {
 	padding: 5px 10px;
 }

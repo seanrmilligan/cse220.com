@@ -37,8 +37,12 @@ function fromBase(str, base) {
 	return sum;
 }
 
-function val(c) {
+function valOf(c) {
 	return baseChars.indexOf(c);
+}
+
+function charOf(val) {
+	return baseChars[val];
 }
 
 /* OPERATIONS CONVERTING TO AND FROM STRING REPRESENTATIONS OF UNSIGNED MAGNITUDE */
