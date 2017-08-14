@@ -55,8 +55,20 @@ h2 {
 h3, h4 {
 	font-size: 14px;
 }
-h3, h4, .table-container, p {
+h3, h4, .overflow-container, p {
 	margin: 0 10px 10px 10px;
+}
+sup {
+	font-size: 0.6em;
+	vertical-align: top;
+}
+a:link, a:visited {
+	color: #0000FF;
+	text-decoration: none;
+}
+
+a:hover, a:active {
+	text-decoration: underline;
 }
 
 .menu select, .menu button {
@@ -80,11 +92,14 @@ ul, ol {
 	margin-bottom: 10px;
 }
 
+ol ol, ol ul, ul ol, ul ul {
+	margin-left: 20px;
+}
 
 
-.table-container {
+
+.overflow-container {
 	overflow-x: auto;
-	margin-bottom: 10px;
 }
 table {
 	border-collapse: collapse;
@@ -135,7 +150,7 @@ th.nowrap, td.nowrap {
 }
 pre {
 	padding: 20px;
-	margin: 20px;
+	margin: 10px 20px;
 	overflow: auto;
 }
 pre.cli {
@@ -173,4 +188,9 @@ pre.cli {
 }
 .info {
 	background-color: #FFF3B3;
+}
+
+.scratchwork {
+	border: 1px solid #CACACA;
+	background-color: #F3F3F3;
 }

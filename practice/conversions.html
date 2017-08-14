@@ -46,7 +46,7 @@
 
 				do {
 					fromBase = randInt(2, 36);
-				} while(toBase == fromBase || powerRelations(toBase, fromBase));
+				} while(toBase == fromBase || isPower(toBase, fromBase));
 
 				return {type: 'arbitrary', to: toBase, from: fromBase, value: val};
 			}
@@ -71,24 +71,55 @@
 				return {type: 'powers', to: toBase, from: fromBase, value: val};
 			}
 
-			function powerRelations(a, b) {
+			function isPower(a, b) {
 				var lesser, greater;
+				var x = 1;
 
-				if (a == b) {
+				if (a < b) {
+					lesser = a;
+					greater = b;
+				} else if (a > b) {
+					lesser = b;
+					greater = a;
+				} else {
+					return true;
+				}
+
+				while (x < greater) {
+					x = x * lesser;
+				}
+
+				if (x == greater) {
 					return true;
 				} else {
-					lesser = Math.min(a, b);
-					greater = Math.max(a, b);
-
-					do {
-						lesser = lesser * lesser;
-						
-						if (lesser == greater) {
-							return true;
-						}
-					} while (lesser < greater);
-
 					return false;
+				}
+			}
+
+			function getPowerRelation(a, b) {
+				var lesser, greater;
+				var x = 1;
+				var i = 0;
+
+				if (a < b) {
+					lesser = a;
+					greater = b;
+				} else if (a > b) {
+					lesser = b;
+					greater = a;
+				} else {
+					return 1;
+				}
+
+				while (x < greater) {
+					x = x * lesser;
+					i++;
+				}
+
+				if (x == greater) {
+					return i;
+				} else {
+					return null;
 				}
 			}
 
@@ -117,8 +148,10 @@
 				
 				$('#solution').html('');
 				$('#solution').append(`<p>To convert a number from base-${problem.from} to base-${problem.to}, you can use the rules for arbitrary base-to-base conversion.</p>`);
-				$('#solution').append(`<h3>Find the value of the number in its starting base.</h3>`);
+				$('#solution').append(`<br />`);
+				$('#solution').append(`<h3>Get the value of the number in its current base.</h3>`);
 				$('#solution').append(`<p>Starting from the least significant digit (the right end), multiply the digit by the base raised to the power of its position.</p>`);
+				$('#solution').append(`<br />`);
 				
 
 				var srcRep = toBase(theProblem.value, theProblem.from);
@@ -129,9 +162,10 @@
 					c = srcRep[srcRep.length - i - 1];
 					cVal = (valOf(c) * Math.pow(theProblem.from, i));
 					sum = sum + cVal;
-					$('#solution').append(`<p>Multiply ${c} by ${theProblem.from} <sup>${(i)}</sup>.</p>`);
-					$('#solution').append(`<p>Add the result (${cVal}) to the running sum.`);
+					$('#solution').append(`<p>Multiply ${c} by ${theProblem.from}<sup>${(i)}</sup> and add the result to the running sum.</p>`);
+					$('#solution').append(`<p>Result: ${cVal}</p>`);
 					$('#solution').append(`<p>Running sum: ${sum}</p>`);
+					$('#solution').append(`<br />`);
 
 					i++;
 
@@ -139,26 +173,57 @@
 
 				$('#solution').append(`<h3>Convert the value to the target base.</h3>`);
 				$('#solution').append(`<p>Repeatedly divide the value by the target base, and order the remainders from least significant to most significant positions.</p>`);
+				$('#solution').append(`<br />`);
 
 				var ans = '';
 				var remainder;
 				do {
 					
-					$('#solution').append(`<p>Divide ${sum} by ${theProblem.to}.</p>`);
+					$('#solution').append(`<p>Divide ${sum} by ${theProblem.to} and set the value to the quotient. Convert the remainder to a digit in the target base.</p>`);
 
 					remainder = sum % theProblem.to;
 					sum = sum - remainder;
 					sum = sum / theProblem.to;
-					ans = charOf(remainder) + ans;
+					c = charOf(remainder);
+					ans = c + ans;
 
-					$('#solution').append(`<p>Set the value to the integer result of the division (${sum}) and convert the remainder (${remainder}) to a digit in the target base.</p>`);
+					$('#solution').append(`<p>Result: ${sum}</p>`);
+					$('#solution').append(`<p>Remainder: ${remainder} &rarr; ${c}</p>`);
 					$('#solution').append(`<p>Partial answer: ${ans}`);
+					$('#solution').append(`<br />`);
 
 				} while(sum > 0);
 			}
 
 			function solvePowers(theProblem) {
-				
+				var srcRep = toBase(theProblem.value, theProblem.from);
+				var lesser = Math.min(theProblem.to, theProblem.from);
+				var greater = Math.max(theProblem.to, theProblem.from);
+				var power = getPowerRelation(theProblem.to, theProblem.from);
+
+				$('#solution').html('');
+				$('#solution').append(`<p>To convert a number from base-${problem.from} to base-${problem.to}, you can take advantage of the fact that there is a power relation between the two bases.</p>`);
+				$('#solution').append(`<h3>Find the power of one in terms of the other.</h3>`);
+				$('#solution').append(`<p>Look at the two bases. ${greater} is ${lesser}<sup>${power}</sup>. The value of the power (${power}) indicates that ${power}-digit groups in base-${lesser} will map directly to one digit in the base-${greater}.</p>`);
+
+				if (theProblem.from > theProblem.to) {
+					$('#solution').append(`<h3>Map each digit to a group of digits in the target base.</h3>`);
+					$('#solution').append(`<p>This can be done either right-to-left or left-to-right.</p>`);
+					$('#solution').append(`<br />`);
+
+					var cSrcRep;
+					var destRep = '';
+					for (var i=0; i<srcRep.length; i++) {
+						cSrcRep = srcRep[i];
+						cDestRep = zeroExtend(toBase(valOf(cSrcRep), theProblem.to), power);
+						destRep = destRep + cDestRep;
+						$('#solution').append(`<p>Convert the digit ${cSrcRep} to a ${power}-digit group (${cDestRep}) in the target base.</p>`);
+						$('#solution').append(`<p>Partial answer: ${destRep}</p>`);
+						$('#solution').append(`<br />`);
+					}
+				} else {
+
+				}
 			}
 
 			function prettyName(problemType) {

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Arbitrary Bases | Number Representations</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link href="../rsrc/style/style.css" rel="stylesheet" />
+	</head>
+	<body>
+		<article>
+			<h1>Arbitrary Bases</h1>
+			<div>
+				<h2>Introduction</h2>
+				<h3>Terminology &amp; Nomenclature</h3>
+				<ul>
+					<li id="radix"><span class="definition">radix</span> &mdash; The base. Also the number of digits used to represent value in that radix.</li>
+					<li id="radix-point"><span class="definition">radix-point</span> &mdash; The general term for the point that seperates the whole number part of a value from the fractional number part.</li>
+				</ul>
+				<h2 id="radix-n">Radix-N</h2>
+				<div class="overflow-container">
+					<table>
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Prefix</th>
+								<th>Radix-N</th>
+								<th>Digit Range</th>
+								<th>Number of Digits</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td></td>
+								<td></td>
+								<td>N</td>
+								<td>[0, N-1]</td>
+								<td>N</td>
+							</tr>
+							<tr>
+								<td>Binary</td>
+								<td>0b</td>
+								<td>2</td>
+								<td>[0, 1]</td>
+								<td>2</td>
+							</tr>
+							<tr>
+								<td>Octal</td>
+								<td>0o</td>
+								<td>8</td>
+								<td>[0, 7]</td>
+								<td>8</td>
+							</tr>
+							<tr>
+								<td>Decimal</td>
+								<td>0d</td>
+								<td>10</td>
+								<td>[0, 9]</td>
+								<td>10</td>
+							</tr>
+							<tr>
+								<td>Hexadecimal</td>
+								<td>0x</td>
+								<td>16</td>
+								<td>[0, F]</td>
+								<td>16</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<h3>Summary</h3>
+				<p>In an arbitrary base-N system, there are N digits to represent value in that system. Those digits go from 0 through N-1. Each position a digit occupies represents the value of that digit multiplied by N raised to the position relative to the radix-point.</p>
+				
+				<h3>Converting a Value to a Base-N Number</h3>
+				<p>The value of a number in base-10 can be converted to a number in some base-N by repeatedly dividing the number by N and converting the remainder into a base-N digit.</p>
+				<h4>Steps</h4>
+				<ol>
+					<li>Divide the number by N to obtain a whole-numbered quotient and a remainder.</li>
+					<li>Convert the remainder to a digit in base-N and write that digit in the next available position from least significant to most significant.</li>
+					<li>Set the number equal to the quotient.</li>
+					<li>Repeat until the quotient and remainder are zero.</li>
+				</ol>
+
+				<h3>Computing the Value of a Base-N Number</h3>
+				<p>The value of a number can be computed from a polynomial expansion of its digits. The powers start at zero to the left of the radix-point. They count up from the radix-point as they move towards the more significant digits (leftward), and count down as they move towards the less significant digits (rightward).</p>
+
+				<h4>Steps</h4>
+				<p class="note info">Note: Only steps 2 and 4 differ, but the steps are repeated for verbosity.</p>
+				<ol>
+					<li>Get the Whole Number Value
+						<ol>
+							<li>Start to the left of the radix-point (position = 0).</li>
+							<li>Multiply the digit at the given position by N<sup>position</sup>.</li>
+							<li>Add this to a running sum.</li>
+							<li>Increment the position by one as you move leftward to more significant digits.</li>
+							<li>If there are more digits, go to step 2. Otherwise, stop.</li>
+						</ol>
+					</li>
+					<li>Get the Fractional Number Value
+						<ol>
+							<li>Start to the right of the radix-point (position = -1).</li>
+							<li>Multiply the digit at the given position by N<sup>position</sup>.</li>
+							<li>Add this to a running sum.</li>
+							<li>Decrement the position by one as you move rightward to less significant digits.</li>
+							<li>If there are more digits, go to step 2. Otherwise, stop.</li>
+						</ol>
+					</li>
+				</ol>
+
+				<h4>Example: Base-2 to Base-10</h4>
+
+<pre class="scratchwork">
+1011.0101 = (1 * 2^3) + (0 * 2^2) + (1 * 2^1) + (1 * 2^0) + (0 * 2^-1) + (1 * 2^-2) + (0 * 2^-3) + (1 * 2^-4)
+          =  8        +  0        +  2        +  1        +  0         +  1/4       +  0         +  1/16
+          =  11 5/16
+          =  11.3125 (base-10)
+</pre>
+				
+				<h2 id="powers">Power Conversions</h2>
+				<h3>Summary</h3>
+				<p>When converting between two bases, it is possible to exploit a shortcut if the bases can be written in the form b<sup>X</sup> and b<sup>Y</sup>.</p>
+				<h3>Converting Between Base-b<sup>X</sup> and Base-b<sup>Y</sup>.</h3>
+				<p>When two bases are related by powers X and Y of some (possibly third) base b, this means that Y digits of base b<sup>X</sup> can be directly mapped to X digits of base b<sup>Y</sup>. This is most useful when one of X or Y is one. Otherwise an intermediate translation through base b might be necessary.</p>
+				<h4>Steps</h4>
+				<ol>
+					<li>If X or Y is one
+						<ol>
+							<li>Starting from the radix-point, group digits on the whole-numbered side into groups of Y.</li>
+							<li>Prepend zeroes to the most significant digits to complete a grouping, if necessary.</li>
+							<li>Starting from the radix-point (again), group digits on the fractional-numbered side into groups of Y.</li>
+							<li>Append zeroes to the least significant digits to complete a grouping, if necessary.</li>
+							<li>Map each group of Y digits directly from base-b<sup>X</sup> to base b-<sup>Y</sup>.</li>
+						</ol>
+					</li>
+					<li>If neither X nor Y are one
+						<ol>
+							<li>TODO</li>
+						</ol>
+					</li>
+				</ol>
+				<h4>Example: Base-2 to Base-16</h4>
+				<p class="label info">Direct Conversion</p>
+<pre class="scratchwork">
+base-2:  2  = 2^1
+base-16: 16 = 2^4
+
+4 digits of base-2 map to 1 digit of base-16.
+
+Direct conversion:
+0b11011000 = 1101 1000
+           = C    8
+           = 0xC8
+</pre>
+
+				<h4>Example: Base-8 to Base-16</h4>
+				<p class="label info">Indirect Conversion</p>
+<pre class="scratchwork">
+base-8:  8  = 2^3
+base-16: 16 = 2^4
+
+4 digits of base-8 map to 3 digits of base-16.
+
+Indirect conversion through base-2:
+0o5672 = 101  110  111  010
+       = 1011   1011   1010
+       = B      B      A
+       = 0xBBA
+</pre>
+
+			</div>
+		</article>
+	</body>
+</html>
