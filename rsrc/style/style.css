@@ -99,6 +99,7 @@ ol ol, ol ul, ul ol, ul ul {
 
 
 .overflow-container {
+	padding-bottom: 5px;
 	overflow-x: auto;
 }
 table {

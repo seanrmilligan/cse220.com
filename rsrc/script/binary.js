@@ -1,16 +1,32 @@
 /* EXTENSION OPERATIONS ON STRING REPRESENTATIONS OF BINARY NUMBERS */
 
 /**
- * @param {string} str The string representation of a binary number.
+ * @param {string} str The string to prepend to.
  * @param {number} width The total length the extended string should be.
  * @param {string} char The character to prepend to str.
- * @returns {string} The extended binary number, or the original string if width is less than or equal to the length of str.
+ * @returns {string} The extended string, or the original string if width is less than or equal to the length of str.
  */
-function extend(str, width, char) {
+function prepend(str, width, char) {
 	var extStr = str;
 
 	while (extStr.length < width) {
 		extStr = char + extStr;
+	}
+
+	return extStr;
+}
+
+/**
+ * @param {string} str The string to append to.
+ * @param {number} width The total length the extended string should be.
+ * @param {string} char The character to append to str.
+ * @returns {string} The extended string, or the original string if width is less than or equal to the length of str.
+ */
+function append(str, width, char) {
+	var extStr = str;
+
+	while (extStr.length < width) {
+		extStr = extStr + char;
 	}
 
 	return extStr;
@@ -22,7 +38,7 @@ function extend(str, width, char) {
  * @returns {string} The zero-extended binary number, or the original string if width is less than or equal to the length of str.
  */
 function zeroExtend(str, width) {
-	return extend(str, width, '0');
+	return prepend(str, width, '0');
 }
 
 /**
@@ -32,7 +48,7 @@ function zeroExtend(str, width) {
  */
 function signExtend(str, width) {
 	var sign = (str == '') ? '0' : str[0];
-	return extend(str, width, sign);
+	return prepend(str, width, sign);
 }
 
 /* BITWISE OPERATIONS ON STRING REPRESENTATIONS OF BINARY NUMBERS */

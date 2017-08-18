@@ -13,15 +13,17 @@
 		<!-- LOCAL SCRIPTS -->
 		<script src="../rsrc/script/binary.js"></script>
 		<script src="../rsrc/script/numreps.js"></script>
+		<script src="../rsrc/script/numutils.js"></script>
 		<script src="../rsrc/script/rand.js"></script>
 
 		<script type="text/javascript">
 			var problem = {};
 			var types = ['arbitrary', 'powers', 'unsigned', 'signed', 'ones', 'twos', 'single', 'double'];
+			const MAX_PROBLEM_VALUE = 32768; // Math.pow(2, 15)
 
 			function newProblem(problemType) {
 				if (problemType == 'all') {
-					problemType = types[randInt(0, types.length-1)];
+					problemType = randArrayItem(types);
 				} else if (problemType == 'floating') {
 					problemType = (Math.random() > 0.5 ? 'single' : 'double');
 				}
@@ -52,23 +54,19 @@
 			}
 
 			function newPowers() {
-				var toBase;
+				var toBase = Math.pow(2, randInt(1, 5));
 				var fromBase;
 				var val = randInt(0, 32768);
 
-				var temp1 = 2;
-				var temp2 = Math.pow(temp1, randInt(2, 4));
-
-				// randomly choose whether the toBase or the fromBase is the larger base
-				if (Math.random() > 0.5) {
-					toBase = temp1;
-					fromBase = temp2;
-				} else {
-					toBase = temp2;
-					fromBase = temp1;
-				}
-
+				do {
+					fromBase = Math.pow(2, randInt(1, 5));
+				} while (toBase == fromBase);
+				
 				return {type: 'powers', to: toBase, from: fromBase, value: val};
+			}
+
+			function nextMultipleOfN(n, value) {
+				return (value - (value % n)) + n;
 			}
 
 			function isPower(a, b) {
@@ -123,18 +121,29 @@
 				}
 			}
 
-			function solveProblem(theProblem) {
+			function isPowerOf(value, base) {
+				var i;
+				for (i=0; i<value; i=i*base);
+				return i == value;
+			}
 
+			function solveProblem(theProblem) {
 				$('#solution').html('');
 
-				switch(problem.type) {
+				switch(theProblem.type) {
 					case 'arbitrary':
+						$('#solution').append(`<p>To convert a number from base-${theProblem.from} to base-${theProblem.to}, you can use the rules for arbitrary base-to-base conversion.</p>`);
+						$('#solution').append(`<br />`);
 						solveArbitrary(theProblem);
 						break;
 					case 'powers':
+						$('#solution').append(`<p>To convert a number from base-${theProblem.from} to base-${theProblem.to}, you can take advantage of the fact that there is a power relation between the two bases.</p>`);
 						solvePowers(theProblem);
 						break;
 					case 'unsigned':
+						$('#solution').append(`<p>When converting a number ${theProblem.direction} unsigned magnitude we can apply the same rules as converting a number ${theProblem.direction} an arbitrary base.</p>`);
+						solveUnsigned(theProblem);
+						break;
 					case 'signed':
 					case 'ones':
 					case 'twos':
@@ -145,15 +154,11 @@
 
 			function solveArbitrary(theProblem) {
 				var sum = 0;
-				
-				$('#solution').html('');
-				$('#solution').append(`<p>To convert a number from base-${problem.from} to base-${problem.to}, you can use the rules for arbitrary base-to-base conversion.</p>`);
-				$('#solution').append(`<br />`);
+
 				$('#solution').append(`<h3>Get the value of the number in its current base.</h3>`);
 				$('#solution').append(`<p>Starting from the least significant digit (the right end), multiply the digit by the base raised to the power of its position.</p>`);
 				$('#solution').append(`<br />`);
 				
-
 				var srcRep = toBase(theProblem.value, theProblem.from);
 				var i=0;
 				var c;
@@ -196,34 +201,168 @@
 			}
 
 			function solvePowers(theProblem) {
-				var srcRep = toBase(theProblem.value, theProblem.from);
-				var lesser = Math.min(theProblem.to, theProblem.from);
-				var greater = Math.max(theProblem.to, theProblem.from);
-				var power = getPowerRelation(theProblem.to, theProblem.from);
+				var direct = false;
+				var fromPower = getPowerRelation(2, theProblem.from);
+				var toPower = getPowerRelation(2, theProblem.to);
 
-				$('#solution').html('');
-				$('#solution').append(`<p>To convert a number from base-${problem.from} to base-${problem.to}, you can take advantage of the fact that there is a power relation between the two bases.</p>`);
-				$('#solution').append(`<h3>Find the power of one in terms of the other.</h3>`);
-				$('#solution').append(`<p>Look at the two bases. ${greater} is ${lesser}<sup>${power}</sup>. The value of the power (${power}) indicates that ${power}-digit groups in base-${lesser} will map directly to one digit in the base-${greater}.</p>`);
-
-				if (theProblem.from > theProblem.to) {
-					$('#solution').append(`<h3>Map each digit to a group of digits in the target base.</h3>`);
-					$('#solution').append(`<p>This can be done either right-to-left or left-to-right.</p>`);
-					$('#solution').append(`<br />`);
-
-					var cSrcRep;
-					var destRep = '';
-					for (var i=0; i<srcRep.length; i++) {
-						cSrcRep = srcRep[i];
-						cDestRep = zeroExtend(toBase(valOf(cSrcRep), theProblem.to), power);
-						destRep = destRep + cDestRep;
-						$('#solution').append(`<p>Convert the digit ${cSrcRep} to a ${power}-digit group (${cDestRep}) in the target base.</p>`);
-						$('#solution').append(`<p>Partial answer: ${destRep}</p>`);
-						$('#solution').append(`<br />`);
+				var number = {
+					src: {
+						rep: toBase(theProblem.value, theProblem.from),
+						left: '',
+						right: '',
+						groups: '',
+						groupSize: 1
+					},
+					intermed: {
+						rep: toBase(theProblem.value, 2),
+						left: [],
+						right: [],
+						groups: [],
+						groupSize: []
+					},
+					dest: {
+						rep: toBase(theProblem.value, theProblem.to),
+						left: '',
+						right: '',
+						groups: '',
+						groupSize: 1
 					}
-				} else {
-
 				}
+
+				if (theProblem.from == 2 || theProblem.to == 2) {
+					direct = true;
+				}
+
+				$('#solution').append(`<h3>Find the common base.</h3>`);
+				$('#solution').append(`<p>Look at the two bases. ${theProblem.from} is 2<sup>${fromPower}</sup> and ${theProblem.to} is 2<sup>${toPower}</sup>. This means that ${toPower} digits of base-${theProblem.from} will map to ${fromPower} digits of base-${theProblem.to}.</p>`);
+
+				if (!coprime(fromPower, toPower)) {
+					var divisor = gcd(fromPower, toPower);
+					var fromPowerReduced = fromPower / divisor;
+					var toPowerReduced = toPower / divisor;
+
+					$('#solution').append(`<p>We can reduce the ratio of digits: ${toPowerReduced} digits of base-${theProblem.from} will map to ${fromPowerReduced} digits of base-${theProblem.to}.</p>`);
+				}
+
+				if (direct) {
+					$('#solution').append(`<p>Because one of the bases is base-2, we can do a direct conversion.</p>`);
+				} else {
+					$('#solution').append(`<p>Because neither of the bases is base-2, we will do an indirect conversion through base-2.</p>`);
+				}
+
+				var halves;
+
+				halves = splitNum(number.src);
+				number.src.left = halves['left'];
+				number.src.right = halves['right'];
+
+				halves = splitNum(number.dest);
+				number.dest.left = halves['left'];
+				number.dest.right = halves['right'];
+
+				var srcGrpSize, destGrpSize;
+
+				if (direct) {
+					number.src.groupSize = toPower;
+					number.dest.groupSize = fromPower;
+				} else {
+					number.src.groupSize = 1;
+					number.dest.groupSize = 1;
+
+					number.intermed.groupSize['src'] = fromPower;
+					number.intermed.groupSize['dest'] = toPower;
+
+					halves = splitNum(number.intermed);
+					number.intermed.left['src'] = halves['left'];
+					number.intermed.right['src'] = halves['right'];
+					number.intermed.left['dest'] = halves['left'];
+					number.intermed.right['dest'] = halves['right'];
+
+					number.intermed.left['src'] = expandLeft(number.intermed.left['src'], number.intermed.groupSize['src']);
+					number.intermed.right['src'] = expandRight(number.intermed.right['src'], number.intermed.groupSize['src']);
+					number.intermed.left['dest'] = expandLeft(number.intermed.left['dest'], number.intermed.groupSize['dest']);
+					number.intermed.right['dest'] = expandRight(number.intermed.right['dest'], number.intermed.groupSize['dest']);
+
+
+					number.intermed.groups['src'] = groupsOfN(number.intermed.left['src'], number.intermed.groupSize['src']) + ' . ' + groupsOfN(number.intermed.right['src'], number.intermed.groupSize['src']);
+					number.intermed.groups['dest'] = groupsOfN(number.intermed.left['dest'], number.intermed.groupSize['dest']) + ' . ' + groupsOfN(number.intermed.right['dest'], number.intermed.groupSize['dest']);
+				}
+
+				number.src.left = expandLeft(number.src.left, number.src.groupSize);
+				number.src.right = expandRight(number.src.right, number.src.groupSize);
+				number.src.groups = groupsOfN(number.src.left, number.src.groupSize) + ' . ' + groupsOfN(number.src.right, number.src.groupSize);
+
+				number.dest.left = expandLeft(number.dest.left, number.dest.groupSize);
+				number.dest.right = expandRight(number.dest.right, number.dest.groupSize);
+				number.dest.groups = groupsOfN(number.dest.left, number.dest.groupSize) + ' . ' + groupsOfN(number.dest.right, number.dest.groupSize);
+
+				$('#solution').append(`<h3>Starting from the radix point, create groups of digits.</h3>`);
+				$('#solution').append(`<p>${number.src.groups}</p>`);
+
+				if (!direct) {
+					$('#solution').append(`<h3>Convert the groups to base-2.</h3>`);
+					$('#solution').append(`<p>${number.intermed.groups['src']}</p>`);
+					$('#solution').append(`<h3>Regroup the base-2 digits for conversion to the target base.</h3>`);
+					$('#solution').append(`<p>${number.intermed.groups['dest']}</p>`);
+				}
+
+				$('#solution').append(`<h3>Convert the groups to the target base.</h3>`);
+				$('#solution').append(`<p>${number.dest.groups}</p>`);
+			}
+
+			function groupsOfN(str, n) {
+				if (str.length % n == 0) {
+					var groupStr = '';
+
+					for (var i=0; i<str.length; i=i+n) {
+						groupStr = groupStr + str.substring(i, i+n) + ' ';
+					}
+
+					// cut off the last space
+					return groupStr.substring(0, groupStr.length - 1);
+				} else {
+					return str;
+				}
+			}
+
+			function splitNum(base) {
+				var num = [], radixPtIdx;
+
+				radixPtIdx = base.rep.indexOf('.');
+				radixPtIdx = (radixPtIdx == -1) ? base.rep.length : radixPtIdx;
+				num['left']  = base.rep.substring(0, radixPtIdx);
+				num['right'] = base.rep.substring(radixPtIdx, base.rep.length);
+
+				return num;
+			}
+
+			function expandLeft(left, multiple) {
+				if (left.length % multiple != 0) {
+					var newLen = nextMultipleOfN(multiple, left.length);
+					left = prepend(left, newLen, '0');
+				}
+
+				return left;
+			}
+
+			function expandRight(right, multiple) {
+				if (right.length % multiple != 0) {
+					var newLen = nextMultipleOfN(multiple, right.length);
+					right = prepend(right, newLen, '0');
+				}
+
+				return right;
+			}
+
+			function solveUnsigned(theProblem) {
+				var srcRep = toUnsignedMagnitude(theProblem.value);
+
+				if (theProblem.direction == 'to') {
+					solveArbitrary({type: 'arbitrary', value: theProblem.value, from: 10, to: 2});
+				} else {
+					solveArbitrary({type: 'arbitrary', value: theProblem.value, from: 2, to: 10});
+				}
+				
 			}
 
 			function prettyName(problemType) {
@@ -328,7 +467,7 @@
 			</div>
 			<div id="problem"></div>
 			<div id="reference">
-				<div id="charVals" class="table-container">
+				<div id="charVals" class="overflow-container">
 				<table class="horizontal compact">
 					<tbody>
 						<tr>
