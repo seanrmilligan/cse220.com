@@ -1,0 +1,40 @@
+<html lang="en"><head>
+		<title>Sparky</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link href="rsrc/style/style.css" rel="stylesheet">
+	</head>
+	<body style="">
+		<article>
+			<h1>The Command Line</h1>
+			<div>
+				<h2>The Shell and the Command Line</h2>
+				<p>The terms 'shell', 'command line', 'command prompt' and others are colloquially interchangeable, but there is a difference. A shell is a program that acts as the intermediary between you and the operating system. The shell is separate from the interface used to accept input and convey output. For example, on macOS the default shell is bash and the default command line interface is Terminal. On Windows, the shell is Command Prompt (cmd.exe) and the command line interface is Win32 Console.</p>
+				<p>While graphical applications can be used to manage file transfers between your computer and Sparky, I recommend taking the opportunity now to familiarize yourself with the command line. As such, I will only cover command line access.</p>
+				<p>Linux and macOS users: you already have the tools necessary to interact with Sparky.</p>
+				<p>Windows users: At the time of writing, Windows is not natively capable of SSH on the command line. This may change with Windows PowerShell but alternatively I recommend you download and install Git Bash from <a href="https://git-scm.com/downloads">https://git-scm.com/downloads</a>.</p>
+				
+				<h2>Using Programs on the Command Line</h2>
+				<p>Note: Your prompt text and color schemes may vary.</p>
+				<p>Note: The tilde is commonly used in UNIX systems as shorthand for the signed-in user's home folder. My home folder is /home/sean and a folder thus the folder /home/sean/Documents would be represented as ~/Documents</p>
+				<p>You can provide arguments to programs on the command line with the use of flags. Program flags often have both a short flag and long flag version. For example, look at the command line program <span class="cmd">ls</span> (widely available on UNIX-derived systems). This program lists all the files in a directory. If we were to use <span class="cmd">ls</span> in an empty directory, it would look like this:</p>
+
+<!-- ugly preformatted text -->
+<pre class="cli"><span class="prmpt">sean@laptop</span> [<span class="dir">~/empty-dir</span>] $ ls
+<span class="prmpt">sean@laptop</span> [<span class="dir">~/empty-dir</span>] $</pre>
+		<p>By default <span class="cmd">ls</span> only shows non-hidden files. If we want to see all files we can provide the all flag:</p>
+<pre class="cli"><span class="prmpt">sean@laptop</span> [<span class="dir">~/empty-dir</span>] $ ls -a
+.  ..
+<span class="prmpt">sean@laptop</span> [<span class="dir">~/empty-dir</span>] $ ls --all
+.  ..
+<span class="prmpt">sean@laptop</span> [<span class="dir">~/empty-dir</span>] $</pre>
+<!-- ugly preformatted text -->
+
+				<p>There are three things to appreciate about these results:</p>
+				<ol>
+					<li>The all flag has a short version (-a) and a long version (--all) and this is the case for many arguments for many programs.</li>
+					<li>Every folder has at least two things in it: . and .. which are respectively references to the current folder and the folder one level up.</li>
+					<li>Hidden files and folders in UNIX-derived systems begin with a dot which is why we were unable to see these before.</li>
+				</ol>
+		</article>
+	</body>
+</html>

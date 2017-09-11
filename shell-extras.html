@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Sparky</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link href="rsrc/style/style.css" rel="stylesheet" />
+	</head>
+	<body>
+		<article>
+			<h1>Shell Extras</h1>
+			<div>
+				<h2>Customizing Login Actions</h2>
+				<p>It is possible to run scripts upon login automatically. The filename for the script depends on the shell signed into (in the case of Sparky, csh). Each shell will look for its prescribed file(s) in the home directory [~]. Each shell checks for the following files:</p>
+				<ul>
+					<li>bash: .bash_profile, .bash_login, .profile</li>
+					<li>sh: .profile</li>
+					<li>tcsh, csh: .login</li>
+					<li>zsh: .zshrc</li>
+				</ul>
+				<p>If we want to use bash rather than csh when we log in, but also don't want to type bash every time, we can create our own .login file. On login, csh will execute the contents of this file for us, launching bash:</p>
+<pre class="cli">sparky% echo "bash" > .login</pre>
+				
+				<h2>Customizing Bash</h2>
+				<p>To customize bash, you can add a .bashrc file to the home directory [~] on Sparky. This will allow you to colorize the prompt and change its format, among other things. Making a custom .bashrc file is a complicated process, but to start you can download an <a href=".bashrc">example .bashrc</a>. Using the example .bashrc, your prompt will look similar to this:</p>
+<pre class="cli"><span class="prmpt">semilligan@sparky</span> [<span class="dir">~</span>] $</pre>
+				
+				<h2>Generating an SSH Key Pair</h2>
+				<p>You do not need to use a password to login to Sparky. You can generate an SSH key pair, keeping the private key on your computer and copying the public key to Sparky. This will allow you to authenticate yourself without a password. To generate an SSH key pair, perform the following steps on your local computer:</p>
+<pre class="cli"><span class="prmpt">sean@laptop</span> [<span class="dir">~</span>] $ mkdir -p ~/.ssh
+<span class="prmpt">sean@laptop</span> [<span class="dir">~</span>] $ cd ~/.ssh
+<span class="prmpt">sean@laptop</span> [<span class="dir">~/.ssh</span>] $ ssh-keygen -b 4096</pre>
+				<p>Follow the prompts, optionally naming your SSH key and also optionally providing a passphrase to unlock the key on each use. Naming your SSH key is recommended so that you remember what the key is used to access. As the point of the SSH key is to avoid typing a password, you will probably not want to enter a passphrase.</p>
+				<p>Once you have finished, copy the newly generated public key over to Sparky:</p>
+<pre class="cli"><span class="prmpt">sean@laptop</span> [<span class="dir">~/.ssh</span>] $ ssh-copy-id -i ~/.ssh/FILENAME.pub -p 24 NETID@sparky.ic.stonybrook.edu</pre>
+				
+				<h2>Using an SSH Config File</h2>
+				<p>Eventually you will tire of typing in the long hostname for Sparky. Fortunately, you can make an alias for Sparky in an SSH config file. On your local computer, do the following:</p>
+<pre class="cli"><span class="prmpt">sean@laptop</span> [<span class="dir">~</span>] $ echo "Host sparky
+HostName sparky.ic.stonybrook.edu
+Port 24
+User NETID" > ~/.ssh/config
+<span class="prmpt">sean@laptop</span> [<span class="dir">~</span>] $</pre>
+				<p>Now when you sign into Sparky, you do not need to type out the full hostname and port. Simply do the following:</p>
+<pre class="cli"><span class="prmpt">sean@laptop</span> [<span class="dir">~</span>] $ ssh sparky</pre>
+				<p>This will also make copying files over to Sparky easier when using <span class="cmd">scp</span>:</p>
+<pre class="cli"><span class="prmpt">sean@laptop</span> [<span class="dir">~</span>] $ scp local_file.txt sparky:.</pre>
+			</div>
+		</article>
+	</body>
+</html>

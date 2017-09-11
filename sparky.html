@@ -13,65 +13,30 @@
 				<p>Sparky is a UNIX operating system, specifically SunOS version 5.10.</p>
 				<p>Sparky will be how you submit your assignments this semester.</p>
 				
-				<h2>The Shell and the Command Line</h2>
-				<p>The terms 'shell', 'command line', 'command prompt' and others are colloquially interchangeable, but there is a difference. A shell is a program that acts as the intermediary between you and the operating system. The shell is separate from the interface used to accept input and convey output. For example, on macOS the default shell is bash and the default command line interface is Terminal. On Windows, the shell is Command Prompt (cmd.exe) and the command line interface is Win32 Console.</p>
-				<p>While graphical applications can be used to manage file transfers between your computer and Sparky, I recommend taking the opportunity now to familiarize yourself with the command line. As such, I will only cover command line access.</p>
-				<p>Linux and macOS users: you already have the tools necessary to interact with Sparky.</p>
-				<p>Windows users: At the time of writing, Windows is not natively capable of SSH on the command line. This may change with Windows PowerShell but alternatively I recommend you download and install Git Bash from <a href="https://git-scm.com/downloads">https://git-scm.com/downloads</a>.</p>
-				
-				<h2>Using Programs on the Command Line</h2>
-				<p>Note: Your prompt text and color schemes may vary.</p>
-				<p>Note: The tilde is commonly used in UNIX systems as shorthand for the signed-in user's home folder. My home folder is /home/sean and a folder thus the folder /home/sean/Documents would be represented as ~/Documents</p>
-				<p>You can provide arguments to programs on the command line with the use of flags. Program flags often have both a short flag and long flag version. For example, look at the command line program <span class="cmd">ls</span> (widely available on UNIX-derived systems). This program lists all the files in a directory. If we were to use <span class="cmd">ls</span> in an empty directory, it would look like this:</p>
-
-<!-- ugly preformatted text -->
-<pre class="cli"><span class="prmpt">sean@laptop</span> [<span class="dir">~/empty-dir</span>] $ ls
-<span class="prmpt">sean@laptop</span> [<span class="dir">~/empty-dir</span>] $</pre>
-		<p>By default <span class="cmd">ls</span> only shows non-hidden files. If we want to see all files we can provide the all flag:</p>
-<pre class="cli"><span class="prmpt">sean@laptop</span> [<span class="dir">~/empty-dir</span>] $ ls -a
-.  ..
-<span class="prmpt">sean@laptop</span> [<span class="dir">~/empty-dir</span>] $ ls --all
-.  ..
-<span class="prmpt">sean@laptop</span> [<span class="dir">~/empty-dir</span>] $</pre>
-<!-- ugly preformatted text -->
-
-				<p>There are three things to appreciate about these results:</p>
-				<ol>
-					<li>The all flag has a short version (-a) and a long version (--all) and this is the case for many arguments for many programs.</li>
-					<li>Every folder has at least two things in it: . and .. which are respectively references to the current folder and the folder one level up.</li>
-					<li>Hidden files and folders in UNIX-derived systems begin with a dot which is why we were unable to see these before.</li>
-				</ol>
-
 				<h2>Accessing Sparky</h2>
-				<p>Sparky is hosted on the school's servers. You will be given credentials to access Sparky over the SSH (Secure SHell) protocol.</p>
-				<p>Sparky can be logged into via two different URLs:</p>
+				<p>Sparky is hosted on the school's servers. You will be given credentials to login to Sparky over the SSH (Secure SHell) protocol.</p>
+				<p>Sparky can accessed via two different URLs:</p>
 				<ul>
 					<li>sparky.ic.stonybrook.edu</li>
 					<li>sparky.ic.sunysb.edu</li>
 				</ul>
-				<p>To sign into Sparky, open your command line program and type <span class="cmd">ssh NETID@sparky.ic.stonybrook.edu</span>. If this gives you trouble, try <span class="cmd">ssh -p 24 NETID@sparky.ic.stonybrook.edu</span>.</p>
+				<p>To sign into Sparky, open your command line program and enter the following:</p>
+<pre class="cli"><span class="prmpt">sean@laptop</span> [<span class="dir">~</span>] $ ssh -p 24 NETID@sparky.ic.stonybrook.edu</pre>
+				<p>You will be prompted to enter your password. No text will appear while you type it. After you enter your password you must hit enter once more to get past a welcome screen. Once in your prompt will look like the following:</p>
+<pre class="cli">sparky%</pre>
 				
 				<h2>Using the Shell</h2>
-						Sparky uses csh shell by default. 
-				Enter command "echo $SHELL" to confirm.
-				$SHELL is an environment variable for the current running shell.
-
-				Sparky also has the bash shell available.
-				To launch bash from csh, type 'bash' at the command line.
-				Add a .bashrc file to the home directory [~] to colorize and change the prompt.
-
-				It is possible to run scripts upon ssh login automatically.
-				The script that is run depends on the shell used on sign-in (csh).
-				Each shell will look for its given files in the home directory [~].
-
-				bash: .bash_profile, .bash_login, .profile
-				sh: .profile
-				tcsh, csh: .login
-				zsh: .zshrc
-
-				You do not need to login to sparky with a password.
-				You can generate an ssh key pair and copy that to sparky.
-				ssh-copy-id -i ~/.ssh/id_rsa.pub -p 24 NETID@sparky.ic.stonybrook.edu
+				<p>Sparky uses csh (C SHell) by default. We can confirm this by printing out the SHELL environment variable. To confirm, we <span class="cmd">echo</span> it to standard out:</p>
+<pre class="cli">sparky% echo $SHELL
+/bin/csh
+sparky%</pre>
+				<p>Sparky also has bash (Bourne Again SHell) available. As bash is the default shell on macOS and many versions of Linux, it is the recommended shell to use. It also supports more actions than csh which will improve your experience on Sparky. To launch bash from csh, type <span class="cmd">bash</span> at the command line.</p>
+<pre class="cli">sparky% bash
+bash-3.2$</pre>
+				<h2>Submitting Homework on Sparky</h2>
+				<p>To submit on Sparky, run the following program:
+<pre class="cli">sparky% ~cse220/submit</pre>
+				<p>Follow the ensuing prompts. The line count for your homework submission may vary by one line as a timestamp is appended to your homework file. Do not be concerned unless the line count reported varies by more than one line.</p>
 			</div>
 		</article>
 	</body>
