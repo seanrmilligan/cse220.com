@@ -145,6 +145,7 @@
 						solveUnsigned(theProblem);
 						break;
 					case 'signed':
+						#('solution').append(`<p>When converting a number ${theProblem.direction} signed magnitude we can apply the same rules as converting a number ${theProblem.direction} an arbitrary base.</p>`)
 					case 'ones':
 					case 'twos':
 					case 'single':
@@ -310,6 +311,17 @@
 				$('#solution').append(`<p>${number.dest.groups}</p>`);
 			}
 
+			function solveUnsigned(theProblem) {
+				var srcRep = toUnsignedMagnitude(theProblem.value);
+
+				if (theProblem.direction == 'to') {
+					solveArbitrary({type: 'arbitrary', value: theProblem.value, from: 10, to: 2});
+				} else {
+					solveArbitrary({type: 'arbitrary', value: theProblem.value, from: 2, to: 10});
+				}
+				
+			}
+
 			function groupsOfN(str, n) {
 				if (str.length % n == 0) {
 					var groupStr = '';
@@ -352,17 +364,6 @@
 				}
 
 				return right;
-			}
-
-			function solveUnsigned(theProblem) {
-				var srcRep = toUnsignedMagnitude(theProblem.value);
-
-				if (theProblem.direction == 'to') {
-					solveArbitrary({type: 'arbitrary', value: theProblem.value, from: 10, to: 2});
-				} else {
-					solveArbitrary({type: 'arbitrary', value: theProblem.value, from: 2, to: 10});
-				}
-				
 			}
 
 			function prettyName(problemType) {
