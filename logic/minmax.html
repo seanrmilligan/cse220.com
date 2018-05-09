@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>CSE 220</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link href="../rsrc/style/style.css" rel="stylesheet" />
+	</head>
+	<body>
+	<article>
+		<h1>Combinatorial Logic</h1>
+		<div>
+			<h2>Introduction</h2>
+			<h3>Terminology &amp; Nomenclature</h3>
+			<ul>
+				<li id="connective"><span class="definition">connective</span> &mdash; An operator in a logical expression joining terms and literals, such as AND, OR, NOT.</li>
+				<li id="literal"><span class="definition">literal</span> &mdash; A single input to a logical expression.</li>
+				<li id="term"><span class="definition">term</span> &mdash;A grouping of literals.</li>
+				<li id="minterm"><span class="definition">minterm</span> &mdash; A term whose output is the minimum value of its inputs (literals). Also, a term that appears in a Sum-of-Products expression.</li>
+				<li id="maxterm"><span class="definition">maxterm</span> &mdash; A term whose output is the maximum value of its inputs (literals). Also, a term that appears in a Product-of-Sums expression.</li>
+			</ul>
+			<h2 id="minmax">Minterms &amp; Maxterms</h2>
+			<h3>Boolean Logic as a Many-Valued Logic</h3>
+			<p>Boolean logic is concerned with two values: true and false (or alternatively, one and zero). Boolean logic is therefore a binary logic. There are other logics that use more values; these are called many-valued logics. For example, Kleene logic uses three values: true, unknown, and false. Other logics may use more, up to infinitely many values to represent degrees of truth.</p>
+			<p>These truth values form a set: {T, F} for Boolean logic, and {T, U, F} for Kleene logic. With many truth values comes the question of how to define the behavior of logical <a href="#connective">connectives</a>. Kleene logic and Boolean logic share a generalized definition for their AND (conjunction) and OR (disjunction) connectives. They define truth values to be comparable as follows:</p>
+			<div class="overflow-container">
+				<table>
+					<thead>
+						<tr>
+							<th>Logic</th>
+							<th>Truth Value Ordering</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Boolean</td>
+							<td>T > F</td>
+						</tr>
+						<tr>
+							<td>Kleene</td>
+							<td>T > U > F</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<p>Making truth values comparable is becomes more and more helpful the more truth values you have. This is because instead of</p>
+			<div class="overflow-container">
+				<table style="display: inline-block;">
+					<thead>
+						<tr>
+							<th colspan="4">Kleene OR</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th>&nbsp;</th>
+							<th>False</th>
+							<th>Unknown</th>
+							<th>True</th>
+						</tr>
+						<tr>
+							<th>False</th>
+							<td>False</td>
+							<td>Unknown</td>
+							<td>True</td>
+						</tr>
+						<tr>
+							<th>Unknown</th>
+							<td>Unknown</td>
+							<td>Unknown</td>
+							<td>True</td>
+						</tr>
+						<tr>
+							<th>True</th>
+							<td>True</td>
+							<td>True</td>
+							<td>True</td>
+						</tr>
+					</tbody>
+				</table>
+				<table  style="display: inline-block;">
+					<thead>
+						<tr>
+							<th colspan="4">Kleene AND</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th>&nbsp;</th>
+							<th>False</th>
+							<th>Unknown</th>
+							<th>True</th>
+						</tr>
+						<tr>
+							<th>False</th>
+							<td>False</td>
+							<td>False</td>
+							<td>False</td>
+						</tr>
+						<tr>
+							<th>Unknown</th>
+							<td>False</td>
+							<td>Unknown</td>
+							<td>Unknown</td>
+						</tr>
+						<tr>
+							<th>True</th>
+							<td>False</td>
+							<td>Unknown</td>
+							<td>True</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</article>
+	</body>
+</html>
